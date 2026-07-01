@@ -3,71 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fast Food Mini App</title>
-    <!-- Telegram Web App SDK -->
+    <title>Premium Fast Food Mini App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <!-- Tailwind CSS chiroyli ko'rinish uchun -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        .premium-transition {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
 </head>
-<body class="p-4 font-sans antialiased bg-gray-50 dark:bg-zinc-950">
+<body class="p-4 font-sans antialiased bg-slate-50 text-slate-900 dark:bg-zinc-950 dark:text-zinc-50">
 
-    <!-- Kafe Nomi (Dinamik yuklanadi) -->
-    <div class="text-center my-4">
-        <h1 id="cafe-name" class="text-3xl font-extrabold tracking-wide uppercase"></h1>
-        <p class="text-sm opacity-60 mt-1">Universal Demo Dostavka</p>
+    <div class="text-center my-6">
+        <h1 id="cafe-name" class="text-2xl font-black tracking-tight text-slate-800 dark:text-white uppercase"></h1>
+        <div class="inline-flex items-center space-x-1.5 mt-1.5 bg-emerald-50 text-emerald-700 px-2.5 py-0.5 rounded-full text-xs font-medium dark:bg-emerald-950/50 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30">
+            <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
+            <span>Tezkor yetkazib berish tizimi</span>
+        </div>
     </div>
 
-    <!-- Mahsulotlar Ro'yxati (Dinamik yuklanadi) -->
-    <div class="space-y-4 mt-6" id="products-container"></div>
+    <div class="space-y-3.5 max-w-md mx-auto" id="products-container"></div>
 
     <script>
-        // INTERFEYSNI KAFEGA MOSLASHTIRISH (UNIVERSAL SOZLAMALAR)
+        // UNIVERSAL CONFIGURATION SYSTEM (UI/UX PRO MAX COMPLIANT)
         const CONFIG = {
-            cafeName: "Smash Burger", // Agar o'zgarsa, faqat shu yer o'zgaradi
+            cafeName: "FASTFOOD PREMIUM",
             currency: "so'm",
-            // Taomlar ro'yxati (Istalgacha taom qo'shish yoki o'chirish mumkin)
             menu: [
-                { id: "burger", name: "Smash Burger", price: 45000, icon: "🍔" },
-                { id: "fri", name: "Kartoshka Fri", price: 15000, icon: "🍟" },
-                { id: "cola", name: "Coca-Cola 0.5", price: 10000, icon: "🥤" }
+                { id: "burger", name: "Smash Burger Classic", price: 45000, desc: "Premium go'shtli kotlet, maxsus pishloqli sous va yangi sabzavotlar" },
+                { id: "fri", name: "Crispy French Fries", price: 15000, desc: "Oltinrang, qarsildoq va issiq kartoshka fri" },
+                { id: "cola", name: "Coca-Cola Zero 0.5L", price: 10000, desc: "Muzdek tetiklashtiruvchi shakarsiz ichimlik" }
             ]
         };
 
-        // Telegram Web App obyektini ishga tushirish
+        // Professional SVG Icons instead of Emojis
+        const SVG_ICONS = {
+            burger: `<svg class="w-6 h-6 text-slate-700 dark:text-zinc-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2 12h20M21 12a9 9 0 00-18 0M3 16h18M3 20h18"/></svg>`,
+            fri: `<svg class="w-6 h-6 text-slate-700 dark:text-zinc-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 10V22M9 6V22M13 8V22M17 10V22M21 12V22M3 2H21"/></svg>`,
+            cola: `<svg class="w-6 h-6 text-slate-700 dark:text-zinc-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 3h12l1 7H5l1-7zM5 10h14v10a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V10zM12 3v7"/></svg>`
+        };
+
         const tg = window.Telegram.WebApp;
         tg.expand(); 
 
-        // Savatcha holati
         const cart = {};
         CONFIG.menu.forEach(item => cart[item.id] = 0);
 
-        // Sahifaga ma'lumotlarni dinamik chiqarish
         document.getElementById("cafe-name").innerText = CONFIG.cafeName;
-        // Kafe nomini sariq rangda ajratib ko'rsatamiz
-        document.getElementById("cafe-name").classList.add("text-yellow-500");
 
         const container = document.getElementById("products-container");
         CONFIG.menu.forEach(item => {
             const html = `
-                <div class="flex items-center justify-between bg-white p-4 rounded-2xl shadow-sm border border-gray-100 dark:bg-zinc-900 dark:border-zinc-800">
-                    <div class="flex items-center space-x-3">
-                        <span class="text-4xl">${item.icon}</span>
+                <div class="premium-transition flex items-center justify-between bg-white p-4 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-slate-100/80 dark:bg-zinc-900 dark:border-zinc-800/60 hover:shadow-md hover:border-slate-200 dark:hover:border-zinc-700">
+                    <div class="flex items-center space-x-3.5">
+                        <div class="p-3 bg-slate-50 rounded-xl dark:bg-zinc-800 border border-slate-100 dark:border-zinc-700/50">
+                            ${SVG_ICONS[item.id] || ''}
+                        </div>
                         <div>
-                            <h3 class="font-bold text-lg dark:text-white">${item.name}</h3>
-                            <p class="text-sm text-yellow-600 font-semibold mt-0.5">${item.price.toLocaleString()} ${CONFIG.currency}</p>
+                            <h3 class="font-semibold text-base text-slate-900 dark:text-zinc-100">${item.name}</h3>
+                            <p class="text-xs text-slate-400 dark:text-zinc-500 mt-0.5 font-normal leading-tight">${item.desc}</p>
+                            <p class="text-sm text-emerald-600 dark:text-emerald-400 font-bold mt-1">${item.price.toLocaleString()} ${CONFIG.currency}</p>
                         </div>
                     </div>
-                    <div class="flex items-center space-x-3 bg-gray-100 p-1.5 rounded-xl dark:bg-zinc-800">
-                        <button onclick="changeQuantity('${item.id}', -1)" class="w-8 h-8 font-bold text-lg rounded-lg bg-white shadow-sm active:scale-95 transition dark:bg-zinc-700 dark:text-white">-</button>
-                        <span id="qty-${item.id}" class="font-bold w-4 text-center dark:text-white">0</span>
-                        <button onclick="changeQuantity('${item.id}', 1)" class="w-8 h-8 font-bold text-lg rounded-lg bg-white shadow-sm active:scale-95 transition dark:bg-zinc-700 dark:text-white">+</button>
+                    <div class="flex items-center space-x-3 bg-slate-50 p-1 rounded-xl dark:bg-zinc-800/80 border border-slate-100 dark:border-zinc-700/40">
+                        <button onclick="changeQuantity('${item.id}', -1)" class="premium-transition w-7 h-7 font-bold text-sm rounded-lg bg-white shadow-sm hover:bg-slate-100 active:scale-90 dark:bg-zinc-700 dark:text-white dark:hover:bg-zinc-600">-</button>
+                        <span id="qty-${item.id}" class="font-bold text-sm w-4 text-center text-slate-800 dark:text-zinc-200">0</span>
+                        <button onclick="changeQuantity('${item.id}', 1)" class="premium-transition w-7 h-7 font-bold text-sm rounded-lg bg-white shadow-sm hover:bg-slate-100 active:scale-90 dark:bg-zinc-700 dark:text-white dark:hover:bg-zinc-600">+</button>
                     </div>
                 </div>
             `;
             container.innerHTML += html;
         });
 
-        // Plyus va minus bosilgandagi mantiq
         function changeQuantity(itemId, delta) {
             const newQty = cart[itemId] + delta;
             if (newQty >= 0) {
@@ -77,27 +84,24 @@
             }
         }
 
-        // Jami summani hisoblash
         function calculateTotal() {
             let total = 0;
-            CONFIG.menu.forEach(item => {
-                total += cart[item.id] * item.price;
-            });
+            CONFIG.menu.forEach(item => { total += cart[item.id] * item.price; });
             return total;
         }
 
-        // Telegram pastki tugmasini boshqarish
         function updateMainButton() {
             const total = calculateTotal();
             if (total > 0) {
-                tg.MainButton.text = `Buyurtma berish: ${total.toLocaleString()} ${CONFIG.currency}`;
+                tg.MainButton.text = `Buyurtmani Tasdiqlash: ${total.toLocaleString()} ${CONFIG.currency}`;
+                tg.MainButton.textColor = "#FFFFFF";
+                tg.MainButton.color = "#10B981"; 
                 tg.MainButton.show();
             } else {
                 tg.MainButton.hide();
             }
         }
 
-        // Tugma bosilganda botga ma'lumot uzatish
         tg.onEvent('mainButtonClicked', function() {
             const orderData = {
                 cafe: CONFIG.cafeName,
