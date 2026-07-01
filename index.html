@@ -3,44 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premium Fast Food Mini App</title>
+    <title>Smash Burger Premium Mini App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
+        /* Premium UI/UX Animations (Kaskadli kirish) */
+        @keyframes cascadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
         .premium-transition {
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .cascade-item {
+            animation: cascadeIn 0.5s ease-out forwards;
+            opacity: 0;
+        }
+        /* Logotip olovining soft pulsatsiyasi */
+        @keyframes softPuse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+        #brand-fire-icon {
+            animation: softPuse 2s infinite ease-in-out;
         }
     </style>
 </head>
 <body class="p-4 font-sans antialiased bg-slate-50 text-slate-900 dark:bg-zinc-950 dark:text-zinc-50">
 
-    <div class="text-center my-6">
-        <h1 id="cafe-name" class="text-2xl font-black tracking-tight text-slate-800 dark:text-white uppercase"></h1>
-        <div class="inline-flex items-center space-x-1.5 mt-1.5 bg-emerald-50 text-emerald-700 px-2.5 py-0.5 rounded-full text-xs font-medium dark:bg-emerald-950/50 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30">
-            <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
-            <span>Tezkor yetkazib berish tizimi</span>
-        </div>
+    <div class="flex items-center justify-center space-x-2 my-6 text-center">
+        <h1 id="cafe-name" class="text-2xl font-black tracking-tight text-slate-800 dark:text-white uppercase">FASTFOOD PREMIUM</h1>
+        <svg id="brand-fire-icon" class="w-7 h-7 text-emerald-500 fill-emerald-500" viewBox="0 0 24 24"><path d="M11.75 2.1c-.2-.1-.45-.1-.65 0C8.5 3.3 6 6.1 6 9.5c0 2.3 1.1 4.3 2.8 5.6-.1.1-.2.2-.3.3-.8.9-1.3 2-1.3 3.3 0 2.9 2.4 5.3 5.3 5.3s5.3-2.4 5.3-5.3c0-1.3-.5-2.4-1.3-3.3-.1-.1-.2-.2-.3-.3C18.9 13.8 20 11.8 20 9.5c0-3.4-2.5-6.2-5.1-7.4h-.05c-.15 0-.3.05-.45.1l-.6.4c-.2.15-.3.4-.3.6v.1c.1.2.3.4.5.5h1c2.1 1.1 3.8 3.5 3.8 6.2 0 1.9-.9 3.5-2.2 4.6-.2.1-.4.2-.5.4-.1.1-.1.3-.1.5 0 .2.1.4.2.5l.4.3c1.1 1 1.8 2.4 1.8 4s-1.4 3-3 3-3-1.4-3-3l.1-.6.1-.2c1-.9 1.7-2.1 1.7-3.5 0-1.6-.9-3-2.3-3.8-.1-.05-.2-.15-.3-.2l-.1-.1c-.1-.1-.1-.3 0-.45l.2-.3.3-.2c1.4-1.1 2.3-2.8 2.3-4.7 0-2.7-1.7-5.1-3.8-6.2l-.05-.1v.05zm-.25 10.3l.1-.1.1.1-.1.1-.1-.1zm1 1l.1-.1.1.1-.1.1-.1-.1z"/></svg>
     </div>
 
     <div class="space-y-3.5 max-w-md mx-auto" id="products-container"></div>
 
     <script>
-        // UNIVERSAL CONFIGURATION SYSTEM (UI/UX PRO MAX COMPLIANT)
+        // UNIVERSAL CONFIGURATION SYSTEM (Premium Branding with High-Res Photos)
         const CONFIG = {
             cafeName: "FASTFOOD PREMIUM",
             currency: "so'm",
             menu: [
-                { id: "burger", name: "Smash Burger Classic", price: 45000, desc: "Premium go'shtli kotlet, maxsus pishloqli sous va yangi sabzavotlar" },
-                { id: "fri", name: "Crispy French Fries", price: 15000, desc: "Oltinrang, qarsildoq va issiq kartoshka fri" },
-                { id: "cola", name: "Coca-Cola Zero 0.5L", price: 10000, desc: "Muzdek tetiklashtiruvchi shakarsiz ichimlik" }
+                { 
+                    id: "burger", 
+                    name: "Smash Burger Classic", 
+                    price: 45000, 
+                    desc: "Premium go'shtli kotlet, maxsus pishloqli sous va yangi sabzavotlar",
+                    photoUrl: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=600&auto=format&fit=crop"
+                },
+                { 
+                    id: "fri", 
+                    name: "Crispy French Fries", 
+                    price: 15000, 
+                    desc: "Oltinrang, qarsildoq va issiq kartoshka fri (Kraker uslubida)",
+                    photoUrl: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?q=80&w=600&auto=format&fit=crop"
+                },
+                { 
+                    id: "cola", 
+                    name: "Coca-Cola Zero 0.5L", 
+                    price: 10000, 
+                    desc: "Muzdek tetiklashtiruvchi shakarsiz ichimlik",
+                    photoUrl: "https://images.unsplash.com/photo-1629203851020-9d22b1735178?q=80&w=600&auto=format&fit=crop"
+                }
             ]
-        };
-
-        // Professional SVG Icons instead of Emojis
-        const SVG_ICONS = {
-            burger: `<svg class="w-6 h-6 text-slate-700 dark:text-zinc-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2 12h20M21 12a9 9 0 00-18 0M3 16h18M3 20h18"/></svg>`,
-            fri: `<svg class="w-6 h-6 text-slate-700 dark:text-zinc-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 10V22M9 6V22M13 8V22M17 10V22M21 12V22M3 2H21"/></svg>`,
-            cola: `<svg class="w-6 h-6 text-slate-700 dark:text-zinc-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 3h12l1 7H5l1-7zM5 10h14v10a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V10zM12 3v7"/></svg>`
         };
 
         const tg = window.Telegram.WebApp;
@@ -49,15 +74,13 @@
         const cart = {};
         CONFIG.menu.forEach(item => cart[item.id] = 0);
 
-        document.getElementById("cafe-name").innerText = CONFIG.cafeName;
-
         const container = document.getElementById("products-container");
-        CONFIG.menu.forEach(item => {
+        CONFIG.menu.forEach((item, index) => {
             const html = `
-                <div class="premium-transition flex items-center justify-between bg-white p-4 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-slate-100/80 dark:bg-zinc-900 dark:border-zinc-800/60 hover:shadow-md hover:border-slate-200 dark:hover:border-zinc-700">
+                <div class="premium-transition cascade-item flex items-center justify-between bg-white p-4 rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-slate-100/80 dark:bg-zinc-900 dark:border-zinc-800/60 hover:shadow-md hover:border-slate-200 dark:hover:border-zinc-700" style="animation-delay: ${index * 150}ms">
                     <div class="flex items-center space-x-3.5">
-                        <div class="p-3 bg-slate-50 rounded-xl dark:bg-zinc-800 border border-slate-100 dark:border-zinc-700/50">
-                            ${SVG_ICONS[item.id] || ''}
+                        <div class="w-16 h-16 rounded-xl overflow-hidden shadow-inner bg-slate-50 border border-slate-100 dark:border-zinc-700/50">
+                            <img src="${item.photoUrl}" alt="${item.name}" class="w-full h-full object-cover">
                         </div>
                         <div>
                             <h3 class="font-semibold text-base text-slate-900 dark:text-zinc-100">${item.name}</h3>
@@ -67,7 +90,7 @@
                     </div>
                     <div class="flex items-center space-x-3 bg-slate-50 p-1 rounded-xl dark:bg-zinc-800/80 border border-slate-100 dark:border-zinc-700/40">
                         <button onclick="changeQuantity('${item.id}', -1)" class="premium-transition w-7 h-7 font-bold text-sm rounded-lg bg-white shadow-sm hover:bg-slate-100 active:scale-90 dark:bg-zinc-700 dark:text-white dark:hover:bg-zinc-600">-</button>
-                        <span id="qty-${item.id}" class="font-bold text-sm w-4 text-center text-slate-800 dark:text-zinc-200">0</span>
+                        <span id="qty-${item.id}" class="font-bold text-sm w-4 text-center text-slate-800 dark:text-zinc-200 premium-transition">0</span>
                         <button onclick="changeQuantity('${item.id}', 1)" class="premium-transition w-7 h-7 font-bold text-sm rounded-lg bg-white shadow-sm hover:bg-slate-100 active:scale-90 dark:bg-zinc-700 dark:text-white dark:hover:bg-zinc-600">+</button>
                     </div>
                 </div>
@@ -79,7 +102,10 @@
             const newQty = cart[itemId] + delta;
             if (newQty >= 0) {
                 cart[itemId] = newQty;
-                document.getElementById(`qty-${itemId}`).innerText = newQty;
+                const qtySpan = document.getElementById(`qty-${itemId}`);
+                qtySpan.innerText = newQty;
+                qtySpan.classList.add('scale-110', 'text-emerald-500'); // Kichik bounce animatsiyasi
+                setTimeout(() => qtySpan.classList.remove('scale-110', 'text-emerald-500'), 150);
                 updateMainButton();
             }
         }
@@ -95,7 +121,7 @@
             if (total > 0) {
                 tg.MainButton.text = `Buyurtmani Tasdiqlash: ${total.toLocaleString()} ${CONFIG.currency}`;
                 tg.MainButton.textColor = "#FFFFFF";
-                tg.MainButton.color = "#10B981"; 
+                tg.MainButton.color = "#10B981"; // Professional Emerald color
                 tg.MainButton.show();
             } else {
                 tg.MainButton.hide();
