@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fast Food Mini App</title>
+    <!-- Telegram Web App SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- Tailwind CSS chiroyli ko'rinish uchun -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="p-4 font-sans antialiased bg-gray-50 dark:bg-zinc-950">
+
+    <!-- Kafe Nomi (Dinamik yuklanadi) -->
+    <div class="text-center my-4">
+        <h1 id="cafe-name" class="text-3xl font-extrabold tracking-wide uppercase"></h1>
+        <p class="text-sm opacity-60 mt-1">Universal Demo Dostavka</p>
+    </div>
+
+    <!-- Mahsulotlar Ro'yxati (Dinamik yuklanadi) -->
+    <div class="space-y-4 mt-6" id="products-container"></div>
+
+    <script>
+        // INTERFEYSNI KAFEGA MOSLASHTIRISH (UNIVERSAL SOZLAMALAR)
+        const CONFIG = {
+            cafeName: "Smash Burger", // Agar o'zgarsa, faqat shu yer o'zgaradi
+            currency: "so'm",
+            // Taomlar ro'yxati (Istalgacha taom qo'shish yoki o'chirish mumkin)
+            menu: [
+                { id: "burger", name: "Smash Burger", price: 45000, icon: "🍔" },
+                { id: "fri", name: "Kartoshka Fri", price: 15000, icon: "🍟" },
+                { id: "cola", name: "Coca-Cola 0.5", price: 10000, icon: "🥤" }
+            ]
+        };
+
+        // Telegram Web App obyektini ishga tushirish
+        const tg = window.Telegram.WebApp;
+        tg.expand(); 
+
+        // Savatcha holati
+        const cart = {};
+        CONFIG.menu.forEach(item => cart[item.id] = 0);
+
+        // Sahifaga ma'lumotlarni dinamik chiqarish
+        document.getElementById("cafe-name").innerText = CONFIG.cafeName;
+        // Kafe nomini sariq rangda ajratib ko'rsatamiz
+        document.getElementById("cafe-name").classList.add("text-yellow-500");
+
+        const container = document.getElementById("products-container");
+        CONFIG.menu.forEach(item => {
+            const html = `
+                <div class="flex items-center justify-between bg-white p-4 rounded-2xl shadow-sm border border-gray-100 dark:bg-zinc-900 dark:border-zinc-800">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-4xl">${item.icon}</span>
+                        <div>
+                            <h3 class="font-bold text-lg dark:text-white">${item.name}</h3>
+                            <p class="text-sm text-yellow-600 font-semibold mt-0.5">${item.price.toLocaleString()} ${CONFIG.currency}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3 bg-gray-100 p-1.5 rounded-xl dark:bg-zinc-800">
+                        <button onclick="changeQuantity('${item.id}', -1)" class="w-8 h-8 font-bold text-lg rounded-lg bg-white shadow-sm active:scale-95 transition dark:bg-zinc-700 dark:text-white">-</button>
+                        <span id="qty-${item.id}" class="font-bold w-4 text-center dark:text-white">0</span>
+                        <button onclick="changeQuantity('${item.id}', 1)" class="w-8 h-8 font-bold text-lg rounded-lg bg-white shadow-sm active:scale-95 transition dark:bg-zinc-700 dark:text-white">+</button>
+                    </div>
+                </div>
+            `;
+            container.innerHTML += html;
+        });
+
+        // Plyus va minus bosilgandagi mantiq
+        function changeQuantity(itemId, delta) {
+            const newQty = cart[itemId] + delta;
+            if (newQty >= 0) {
+                cart[itemId] = newQty;
+                document.getElementById(`qty-${itemId}`).innerText = newQty;
+                updateMainButton();
+            }
+        }
+
+        // Jami summani hisoblash
+        function calculateTotal() {
+            let total = 0;
+            CONFIG.menu.forEach(item => {
+                total += cart[item.id] * item.price;
+            });
+            return total;
+        }
+
+        // Telegram pastki tugmasini boshqarish
+        function updateMainButton() {
+            const total = calculateTotal();
+            if (total > 0) {
+                tg.MainButton.text = `Buyurtma berish: ${total.toLocaleString()} ${CONFIG.currency}`;
+                tg.MainButton.show();
+            } else {
+                tg.MainButton.hide();
+            }
+        }
+
+        // Tugma bosilganda botga ma'lumot uzatish
+        tg.onEvent('mainButtonClicked', function() {
+            const orderData = {
+                cafe: CONFIG.cafeName,
+                items: cart,
+                total_price: calculateTotal()
+            };
+            tg.sendData(JSON.stringify(orderData));
+        });
+    </script>
+</body>
+</html>
